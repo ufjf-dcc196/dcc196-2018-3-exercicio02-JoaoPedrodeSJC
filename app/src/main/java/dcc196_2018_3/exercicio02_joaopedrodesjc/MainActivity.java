@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -42,15 +43,20 @@ public class MainActivity extends AppCompatActivity {
         btnAdicionar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                ContentValues valores = new ContentValues();
-                valores.put(SerieContract.Serie.COLUMN_NAME_TITULO, String.valueOf(txtTitulo.getText()));
-                valores.put(SerieContract.Serie.COLUMN_NAME_TEMP, Integer.parseInt(String.valueOf(txtTemporada.getText())));
-                valores.put(SerieContract.Serie.COLUMN_NAME_EP, Integer.parseInt(String.valueOf(txtEpisodio.getText())));
-                long id = db.insert(SerieContract.Serie.TABLE_NAME, null, valores);
-                Log.i("DBINFO", "registro criado com id: " + id);
-                adapter.setCursor(getCursorSeriePos1950());
+                try {
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues valores = new ContentValues();
+                    valores.put(SerieContract.Serie.COLUMN_NAME_TITULO, String.valueOf(txtTitulo.getText()));
+                    valores.put(SerieContract.Serie.COLUMN_NAME_TEMP, Integer.parseInt(String.valueOf(txtTemporada.getText())));
+                    valores.put(SerieContract.Serie.COLUMN_NAME_EP, Integer.parseInt(String.valueOf(txtEpisodio.getText())));
+                    long id = db.insert(SerieContract.Serie.TABLE_NAME, null, valores);
+                    Log.i("DBINFO", "registro criado com id: " + id);
+                    adapter.setCursor(getCursorSeriePos1950());
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(getApplicationContext(),"Dados inseridos incorretos",Toast.LENGTH_SHORT).show();;
+                }
 
             }
         });
@@ -63,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 SerieContract.Serie.COLUMN_NAME_TEMP,
                 SerieContract.Serie.COLUMN_NAME_EP
         };
-        String restricoes = SerieContract.Serie.COLUMN_NAME_TITULO + " > ?";
+        String restricoes = SerieContract.Serie.COLUMN_NAME_EP + " > ?";
         String[] params = {"1950"};
         String sort = SerieContract.Serie.COLUMN_NAME_TITULO+ " DESC";
         return db.query(SerieContract.Serie.TABLE_NAME, visao,restricoes,params,null,null, sort);
