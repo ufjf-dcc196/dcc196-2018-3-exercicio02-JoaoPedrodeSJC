@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnAdicionar,btnRemover;
+    private Button btnAdicionar;
     private EditText txtTitulo,txtTemporada,txtEpisodio;
     private RecyclerView rclSeries;
     private SerieDbHelper dbHelper;
@@ -54,23 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        btnRemover = (Button) findViewById(R.id.btn_remover);
-        btnRemover.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Cursor cursor = getCursorSeriePos1950();
-                cursor.moveToPosition(-1);
-                while(cursor.moveToNext()) {
-                    int idxTitulo = cursor.getColumnIndexOrThrow(SerieContract.Serie.COLUMN_NAME_TITULO);
-                    int idxTemp = cursor.getColumnIndexOrThrow(SerieContract.Serie.COLUMN_NAME_TEMP);
-                    int idxEp = cursor.getColumnIndexOrThrow(SerieContract.Serie.COLUMN_NAME_EP);
-                    String titulo = cursor.getString(idxTitulo);
-                    Integer temporada = cursor.getInt(idxTemp);
-                    Integer episodio = cursor.getInt(idxEp);
-                    Log.i("DBINFO", "titulo: " + titulo+" temporada: "+temporada+" episodio:"+ episodio);
-                }
-            }
-        });
+
     }
     private Cursor getCursorSeriePos1950() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
