@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnAdicionar;
+    private Button btnAdicionar,btnRemover;
     private EditText txtTitulo,txtTemporada,txtEpisodio;
     private RecyclerView rclSeries;
     private SerieDbHelper dbHelper;
@@ -60,6 +60,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        btnRemover = (Button) findViewById(R.id.btn_remover);
+        btnRemover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    String select = SerieContract.Serie.COLUMN_NAME_TITULO+" = ?";
+                    String[] selectArgs = {txtTitulo.getText().toString()};
+
+                    long id = db.delete(SerieContract.Serie.TABLE_NAME,select,selectArgs);
+                    Log.i("DBINFO", "DEL titulo: " + txtTitulo.getText().toString());
+                    adapter.setCursor(getCursorSeriePos1950());
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(getApplicationContext(),"Dados inseridos incorretos",Toast.LENGTH_SHORT).show();;
+                }
+
+            }
+        });
 
     }
     private Cursor getCursorSeriePos1950() {
@@ -70,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 SerieContract.Serie.COLUMN_NAME_EP
         };
         String restricoes = SerieContract.Serie.COLUMN_NAME_EP + " > ?";
-        String[] params = {"1950"};
+        String[] params = {"0"};
         String sort = SerieContract.Serie.COLUMN_NAME_TITULO+ " DESC";
         return db.query(SerieContract.Serie.TABLE_NAME, visao,restricoes,params,null,null, sort);
     }
